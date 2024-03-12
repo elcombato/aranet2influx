@@ -28,7 +28,7 @@ def get_latest_timestamp():
         "|> range(start: -1d)"
         '|> filter(fn: (r) => r["_measurement"] == "aranet4")'
         '|> filter(fn: (r) => r["_field"] == "co2")'
-        "|> max()"
+        "|> last()"
     )
     client.close()
 
