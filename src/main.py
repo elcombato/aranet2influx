@@ -13,7 +13,7 @@ def connect_to_influxdb():
 
     client = InfluxDBClient(url=influx_url, token=influx_token, org=influx_org)
 
-    logging.info("Connected to InfluxDB %s (%s):", influx_url, influx_org)
+    logging.debug("Connected to InfluxDB %s (%s):", influx_url, influx_org)
     return client
 
 
