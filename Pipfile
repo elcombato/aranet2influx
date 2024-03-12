@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 aranet4 = "*"
 influxdb-client = "*"
-pytz = "*"
 
 [dev-packages]
 
