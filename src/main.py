@@ -89,19 +89,29 @@ def write_influxdb(record_list: list):
     logging.info("Writing %s records to InfluxDB", len(record_list))
 
 
+def main():
+    influx_records = read_aranet_data()
+    write_influxdb(influx_records)
+
+
 if __name__ == "__main__":
 
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S %Z",
+        filename=os.getenv("LOGGING_FILE")
     )
-    READ_INTERVAL = int(os.getenv("READ_INTERVAL"))
 
-    try:
-        while True:
-            influx_records = read_aranet_data()
-            write_influxdb(influx_records)
-            sleep(READ_INTERVAL * 60)
-    except KeyboardInterrupt:
-        logging.warning("Interrupted")
+    if "READ_INTERVAL" in os.environ:
+        READ_INTERVAL = int(os.getenv("READ_INTERVAL"))
+        logging.info("Run every %s minutes", READ_INTERVAL)
+        try:
+            while True:
+                main()
+                sleep(READ_INTERVAL * 60)
+        except KeyboardInterrupt:
+            logging.warning("Interrupted")
+    else:
+        logging.info("Run once")
+        main()
