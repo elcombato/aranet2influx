@@ -1,6 +1,8 @@
 import os
+import sys
 from time import sleep
 import logging
+import asyncio
 import aranet4
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -40,9 +42,14 @@ def read_aranet_data():
     start_date = get_latest_timestamp()
     logging.info("Read Aranet starting with %s", start_date.astimezone().isoformat())
 
-    history = aranet4.client.get_all_records(
-        device_mac, entry_filter={"start": start_date}, remove_empty=True
-    )
+    try:
+        history = aranet4.client.get_all_records(
+            device_mac, entry_filter={"start": start_date}, remove_empty=True
+        )
+    except asyncio.exceptions.TimeoutError:
+        logging.exception("Reading Aranet4 timed out:")
+        sys.exit(1)
+
 
     record_list = []
     for item in history.value:
